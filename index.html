@@ -1,120 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>EchoAI</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            color: #333;
-        }
-        .screen {
-            display: none;
-            padding: 20px;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-        .screen h1, .screen h2 {
-            text-align: center;
-        }
-        .nav-buttons {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
-        }
-        .nav-buttons button {
-            padding: 10px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            border: none;
-            background-color: #4CAF50;
-            color: white;
-            font-size: 16px;
-        }
-        #voiceCommandBtn {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            padding: 15px;
-            border-radius: 50%;
-            font-size: 18px;
-            cursor: pointer;
-            background-color: #2196F3;
-            color: white;
-            border: none;
-        }
-        #bedtimeStoryButton {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            padding: 15px;
-            border-radius: 50%;
-            font-size: 18px;
-            cursor: pointer;
-            background-color: #FF9800;
-            color: white;
-            border: none;
-        }
-        button:hover {
-            opacity: 0.9;
-        }
-        #storyDisplay {
-            margin-top: 30px;
-            font-size: 1.3em;
-            line-height: 1.6em;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EchoAI</title>
+<link rel="stylesheet" href="style.css">
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+/* Inline CSS for initial load and animation setup */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background: radial-gradient(circle at top, #0f0f0f, #1a1a1a);
+    color: #fff;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3em;
+    color: #ff0000;
+    text-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { text-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000; }
+    50% { text-shadow: 0 0 30px #ff0000, 0 0 60px #ff5555; }
+}
+
+/* Chat Box */
+.chat-container {
+    background: rgba(20,20,20,0.95);
+    border-radius: 20px;
+    padding: 20px;
+    max-height: 600px;
+    overflow-y: auto;
+    box-shadow: 0 0 50px #ff0000;
+    margin-bottom: 20px;
+}
+
+.message {
+    margin: 10px 0;
+    padding: 12px 18px;
+    border-radius: 15px;
+    max-width: 80%;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.message.user {
+    background: #222;
+    color: #0f0;
+    align-self: flex-end;
+    text-align: right;
+}
+
+.message.echoai {
+    background: #330000;
+    color: #ff4444;
+    align-self: flex-start;
+    text-align: left;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Input Area */
+.input-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.input-container input {
+    width: 70%;
+    padding: 15px 20px;
+    border-radius: 25px 0 0 25px;
+    border: none;
+    outline: none;
+    font-size: 1em;
+    background: #111;
+    color: #fff;
+}
+
+.input-container button {
+    padding: 15px 25px;
+    border-radius: 0 25px 25px 0;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: 1em;
+    background: linear-gradient(45deg, #ff0000, #ff5555);
+    color: #fff;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px #ff0000;
+}
+
+.input-container button:hover {
+    transform: scale(1.1) rotate(-2deg);
+    box-shadow: 0 0 40px #ff5555, 0 0 80px #ff0000;
+}
+
+/* Story Section */
+.story-container {
+    background: #111;
+    border: 2px solid #ff0000;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 0 30px #ff0000;
+    margin-bottom: 30px;
+}
+
+.story-container h2 {
+    color: #ff0000;
+    font-family: 'Orbitron', sans-serif;
+    text-align: center;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px #ff4444;
+}
+
+.story-text {
+    color: #ffaaaa;
+    line-height: 1.6;
+    font-size: 1.1em;
+}
+
+/* Buttons Section */
+.buttons-section {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.action-button {
+    background: linear-gradient(45deg, #550000, #ff0000);
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    padding: 15px 25px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 1em;
+    box-shadow: 0 0 25px #ff0000;
+    transition: all 0.4s ease;
+}
+
+.action-button:hover {
+    transform: scale(1.2) rotate(-3deg);
+    box-shadow: 0 0 50px #ff4444, 0 0 100px #ff0000;
+}
+
+/* Audio Player Placeholder */
+audio {
+    width: 100%;
+    margin-top: 10px;
+    outline: none;
+}
+
+/* Scrollbar */
+.chat-container::-webkit-scrollbar {
+    width: 12px;
+}
+
+.chat-container::-webkit-scrollbar-track {
+    background: #111;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+    background: #ff0000;
+    border-radius: 20px;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    font-size: 0.9em;
+    color: #ff4444;
+    margin-top: 20px;
+    text-shadow: 0 0 5px #ff0000;
+}
+</style>
 </head>
 <body>
+<div class="container">
+    <div class="header">
+        <h1>EchoAI</h1>
+        <p>The AI that listens... and tells</p>
+    </div>
 
-<!-- ===== HOME SCREEN ===== -->
-<div id="home" class="screen">
-    <h1>Welcome to EchoAI</h1>
-    <div class="nav-buttons">
-        <button data-target="explore">Explore</button>
-        <button data-target="profile">Profile</button>
+    <div class="chat-container" id="chat-container">
+        <!-- Messages will appear here dynamically -->
+    </div>
+
+    <div class="input-container">
+        <input type="text" id="user-input" placeholder="Say something to EchoAI..." />
+        <button id="send-btn">Send</button>
+    </div>
+
+    <div class="story-container" id="story-container">
+        <h2>Bedtime Story</h2>
+        <p class="story-text" id="story-text">Your stories will appear here...</p>
+        <audio id="story-audio" controls></audio>
+    </div>
+
+    <div class="buttons-section">
+        <button class="action-button" id="btn-story">Tell Story</button>
+        <button class="action-button" id="btn-sound">Play Sound</button>
+        <button class="action-button" id="btn-fun">Fun Action</button>
+        <button class="action-button" id="btn-mood">Mood Music</button>
+        <button class="action-button" id="btn-surprise">Surprise Me</button>
+    </div>
+
+    <div class="footer">
+        &copy; 2026 EchoAI. Evil never looked this friendly.
     </div>
 </div>
 
-<!-- ===== EXPLORE SCREEN ===== -->
-<div id="explore" class="screen">
-    <h1>Explore</h1>
-    <p>Here you can explore stories, suggestions, and interactive features.</p>
-    <div class="nav-buttons">
-        <button data-target="home">Home</button>
-        <button data-target="profile">Profile</button>
-    </div>
-</div>
-
-<!-- ===== PROFILE SCREEN ===== -->
-<div id="profile" class="screen">
-    <h1>Profile</h1>
-    <p>Track your interactions and AI suggestions here.</p>
-    <div class="nav-buttons">
-        <button data-target="home">Home</button>
-        <button data-target="explore">Explore</button>
-    </div>
-</div>
-
-<!-- ===== BEDTIME STORY SCREEN ===== -->
-<div id="bedtimeStoryScreen" class="screen">
-    <h2>🌙 Bedtime Story</h2>
-    <p id="storyDisplay"></p>
-    <div class="nav-buttons">
-        <button onclick="showScreen('home')">Back to Home</button>
-    </div>
-</div>
-
-<!-- ===== VOICE COMMAND BUTTON ===== -->
-<button id="voiceCommandBtn">🎤</button>
-
-<!-- ===== BEDTIME STORY BUTTON ===== -->
-<button id="bedtimeStoryButton">🌙 Story</button>
-
-<!-- ===== SCRIPT ===== -->
-<script src="echoai.js"></script>
+<!-- Script link -->
+<script src="script.js"></script>
 </body>
 </html>
