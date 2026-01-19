@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0b0f1a">
+    <meta name="description" content="EchoAI — always-on empathetic AI companion.">
+    <meta name="author" content="Joshua">
+
+    <title>EchoAI</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="app-body" data-app-state="boot" data-active-screen="home">
+
+<!-- APP ROOT -->
+<div id="app-root" role="application" aria-label="EchoAI App">
+
+    <!-- SYSTEM LAYER -->
+    <div id="system-layer">
+        <div id="system-network-status"></div>
+        <div id="system-permission-status"></div>
+        <div id="system-background-indicator"></div>
+        <div id="back-handler" tabindex="-1"></div>
+    </div>
+
+    <!-- BOOT SCREEN -->
+    <section id="screen-boot" class="screen screen-active" data-screen="boot" aria-hidden="false">
+        <div class="boot-wrapper">
+            <div id="boot-orb"></div>
+            <h1 id="boot-title">EchoAI</h1>
+            <p id="boot-tagline">Listening. Understanding. Acting.</p>
+            <div id="boot-loader"><div class="boot-progress"></div></div>
+        </div>
+    </section>
+
+    <!-- MAIN APP -->
+    <main id="main-app" aria-hidden="true">
+
+        <!-- TOP STATUS BAR -->
+        <header id="top-status-bar">
+            <div class="status-left"><span id="status-time"></span></div>
+            <div class="status-center"><span id="status-emotion"></span></div>
+            <div class="status-right"><span id="status-battery"></span></div>
+        </header>
+
+        <!-- SCREEN STACK -->
+        <section id="screen-stack">
+
+            <!-- HOME -->
+            <section id="screen-home" class="screen" data-screen="home" aria-hidden="true">
+                <div class="screen-header"><h2>Home</h2></div>
+                <div class="home-core">
+                    <div id="echo-orb-main" role="button" aria-label="Activate EchoAI"></div>
+                    <p class="home-hint">Tap or say “Hey Echo”</p>
+                </div>
+                <div class="home-actions">
+                    <button data-action="talk">Talk</button>
+                    <button data-action="mood">Mood</button>
+                    <button data-action="music">Music</button>
+                    <button data-action="story">Story</button>
+                </div>
+            </section>
+
+            <!-- EXPLORE -->
+            <section id="screen-explore" class="screen" data-screen="explore" aria-hidden="true">
+                <div class="screen-header"><h2>Explore</h2></div>
+                <div class="explore-grid">
+                    <div class="explore-card" data-feature="empathy"><h3>Empathy Engine</h3></div>
+                    <div class="explore-card" data-feature="voice"><h3>Voice Control</h3></div>
+                    <div class="explore-card" data-feature="automation"><h3>Automation</h3></div>
+                    <div class="explore-card" data-feature="insights"><h3>Insights</h3></div>
+                </div>
+            </section>
+
+            <!-- CHAT -->
+            <section id="screen-chat" class="screen" data-screen="chat" aria-hidden="true">
+                <div class="screen-header"><h2>Echo</h2></div>
+                <div id="chat-log" aria-live="polite"></div>
+                <div class="chat-input-bar">
+                    <input type="text" id="chat-input" placeholder="Type or speak..." autocomplete="off">
+                    <button id="chat-send-btn">Send</button>
+                    <button id="chat-voice-btn" aria-label="Voice Command"></button>
+                </div>
+            </section>
+
+            <!-- PROFILE -->
+            <section id="screen-profile" class="screen" data-screen="profile" aria-hidden="true">
+                <div class="screen-header"><h2>Profile</h2></div>
+                <div class="profile-core">
+                    <div class="profile-avatar" role="img" aria-label="User Avatar"></div>
+                    <h3 id="profile-username">Joshua</h3>
+                    <p class="profile-status">EchoAI is learning you</p>
+                </div>
+                <div class="profile-actions">
+                    <button data-profile-action="edit">Edit Profile</button>
+                    <button data-profile-action="voice">Voice Preferences</button>
+                    <button data-profile-action="privacy">Privacy</button>
+                    <button data-profile-action="permissions">Permissions</button>
+                </div>
+            </section>
+
+            <!-- SETTINGS -->
+            <section id="screen-settings" class="screen" data-screen="settings" aria-hidden="true">
+                <div class="screen-header"><h2>Settings</h2></div>
+                <div class="settings-list">
+                    <div class="setting-item"><span>Always Listening Mode</span><button data-toggle="always-listening"></button></div>
+                    <div class="setting-item"><span>Background Activity</span><button data-toggle="background"></button></div>
+                    <div class="setting-item"><span>Emotion Detection</span><button data-toggle="emotion"></button></div>
+                    <div class="setting-item"><span>Voice Wake Word</span><button data-toggle="wakeword"></button></div>
+                    <div class="setting-item"><span>Notifications</span><button data-toggle="notifications"></button></div>
+                </div>
+            </section>
+
+        </section> <!-- END SCREEN STACK -->
+
+        <!-- BOTTOM NAVIGATION -->
+        <nav id="bottom-navigation" role="navigation" aria-label="Main Navigation">
+            <button data-nav="home" aria-label="Home"><span>Home</span></button>
+            <button data-nav="explore" aria-label="Explore"><span>Explore</span></button>
+            <button data-nav="chat" aria-label="Echo"><span>Echo</span></button>
+            <button data-nav="profile" aria-label="Profile"><span>Profile</span></button>
+            <button data-nav="settings" aria-label="Settings"><span>Settings</span></button>
+        </nav>
+
+    </main>
+
+    <!-- OVERLAYS & MODALS -->
+    <div id="voice-overlay" aria-hidden="true">
+        <div class="voice-orb"></div>
+        <p class="voice-status">Listening…</p>
+    </div>
+
+    <div id="permission-modal" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <h3>Permissions Required</h3>
+            <p>EchoAI needs microphone and background access.</p>
+            <button data-permission="allow">Grant</button>
+            <button data-permission="deny">Deny</button>
+        </div>
+    </div>
+
+    <div id="toast-container" aria-live="assertive"></div>
+
+    <!-- RECOVERY SCREEN -->
+    <section id="screen-recovery" class="screen" data-screen="recovery" aria-hidden="true">
+        <div class="recovery-wrapper">
+            <h2>Recovering EchoAI</h2>
+            <p>Please wait while the app restores safely.</p>
+            <button data-recovery="restart">Restart</button>
+        </div>
+    </section>
+
+</div> <!-- END APP ROOT -->
+
+<!-- SCRIPT -->
+<script src="script.js" defer></script>
+
+</body>
+</html>
