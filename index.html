@@ -1,166 +1,328 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#0b0f1a">
-    <meta name="description" content="EchoAI — always-on empathetic AI companion.">
-    <meta name="author" content="Joshua">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EchoAI</title>
 
-    <title>EchoAI</title>
+<style>
+:root {
+    --bg: #0b0f14;
+    --card: #121826;
+    --accent: #4da3ff;
+    --text: #e8ecf1;
+    --muted: #9aa4b2;
+    --danger: #ff4d4d;
+    --success: #4dff88;
+}
 
-    <!-- Favicon -->
-    <link rel="icon" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", system-ui, sans-serif;
+}
 
-    <!-- Stylesheet -->
-    <link rel="stylesheet" href="style.css">
+body {
+    background: radial-gradient(circle at top, #101828, #06080d);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app {
+    width: 360px;
+    height: 640px;
+    background: linear-gradient(180deg, #0f1422, #090c14);
+    border-radius: 24px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* HEADER */
+.header {
+    padding: 18px;
+    text-align: center;
+    background: linear-gradient(90deg, #111a33, #0d1326);
+}
+
+.header h1 {
+    font-size: 20px;
+    letter-spacing: 1px;
+}
+
+.header span {
+    color: var(--accent);
+}
+
+/* MAIN */
+.main {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+.status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status span {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--danger);
+    box-shadow: 0 0 10px var(--danger);
+}
+
+.indicator.active {
+    background: var(--success);
+    box-shadow: 0 0 12px var(--success);
+}
+
+.log {
+    height: 200px;
+    overflow-y: auto;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.log p {
+    margin-bottom: 8px;
+}
+
+.log strong {
+    color: var(--text);
+}
+
+/* CONTROLS */
+.controls {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    flex: 1;
+    background: linear-gradient(180deg, #1b2a4d, #121a33);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(77,163,255,0.25);
+}
+
+button.secondary {
+    background: #0f1424;
+}
+
+/* NAV */
+.nav {
+    display: flex;
+    background: #0a0e18;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.nav button {
+    flex: 1;
+    border-radius: 0;
+    background: transparent;
+    font-size: 12px;
+    padding: 12px 0;
+}
+
+.nav button.active {
+    color: var(--accent);
+}
+</style>
 </head>
-<body id="app-body" data-app-state="boot" data-active-screen="home">
 
-<!-- APP ROOT -->
-<div id="app-root" role="application" aria-label="EchoAI App">
+<body>
 
-    <!-- SYSTEM LAYER -->
-    <div id="system-layer">
-        <div id="system-network-status"></div>
-        <div id="system-permission-status"></div>
-        <div id="system-background-indicator"></div>
-        <div id="back-handler" tabindex="-1"></div>
+<div class="app">
+
+    <div class="header">
+        <h1>Echo<span>AI</span></h1>
     </div>
 
-    <!-- BOOT SCREEN -->
-    <section id="screen-boot" class="screen screen-active" data-screen="boot" aria-hidden="false">
-        <div class="boot-wrapper">
-            <div id="boot-orb"></div>
-            <h1 id="boot-title">EchoAI</h1>
-            <p id="boot-tagline">Listening. Understanding. Acting.</p>
-            <div id="boot-loader"><div class="boot-progress"></div></div>
+    <div class="main">
+
+        <div class="card status">
+            <span id="statusText">Voice inactive</span>
+            <div id="indicator" class="indicator"></div>
         </div>
-    </section>
 
-    <!-- MAIN APP -->
-    <main id="main-app" aria-hidden="true">
+        <div class="card log" id="log"></div>
 
-        <!-- TOP STATUS BAR -->
-        <header id="top-status-bar">
-            <div class="status-left"><span id="status-time"></span></div>
-            <div class="status-center"><span id="status-emotion"></span></div>
-            <div class="status-right"><span id="status-battery"></span></div>
-        </header>
+        <div class="controls">
+            <button onclick="startListening()">Start</button>
+            <button class="secondary" onclick="stopListening()">Stop</button>
+        </div>
 
-        <!-- SCREEN STACK -->
-        <section id="screen-stack">
-
-            <!-- HOME -->
-            <section id="screen-home" class="screen" data-screen="home" aria-hidden="true">
-                <div class="screen-header"><h2>Home</h2></div>
-                <div class="home-core">
-                    <div id="echo-orb-main" role="button" aria-label="Activate EchoAI"></div>
-                    <p class="home-hint">Tap or say “Hey Echo”</p>
-                </div>
-                <div class="home-actions">
-                    <button data-action="talk">Talk</button>
-                    <button data-action="mood">Mood</button>
-                    <button data-action="music">Music</button>
-                    <button data-action="story">Story</button>
-                </div>
-            </section>
-
-            <!-- EXPLORE -->
-            <section id="screen-explore" class="screen" data-screen="explore" aria-hidden="true">
-                <div class="screen-header"><h2>Explore</h2></div>
-                <div class="explore-grid">
-                    <div class="explore-card" data-feature="empathy"><h3>Empathy Engine</h3></div>
-                    <div class="explore-card" data-feature="voice"><h3>Voice Control</h3></div>
-                    <div class="explore-card" data-feature="automation"><h3>Automation</h3></div>
-                    <div class="explore-card" data-feature="insights"><h3>Insights</h3></div>
-                </div>
-            </section>
-
-            <!-- CHAT -->
-            <section id="screen-chat" class="screen" data-screen="chat" aria-hidden="true">
-                <div class="screen-header"><h2>Echo</h2></div>
-                <div id="chat-log" aria-live="polite"></div>
-                <div class="chat-input-bar">
-                    <input type="text" id="chat-input" placeholder="Type or speak..." autocomplete="off">
-                    <button id="chat-send-btn">Send</button>
-                    <button id="chat-voice-btn" aria-label="Voice Command"></button>
-                </div>
-            </section>
-
-            <!-- PROFILE -->
-            <section id="screen-profile" class="screen" data-screen="profile" aria-hidden="true">
-                <div class="screen-header"><h2>Profile</h2></div>
-                <div class="profile-core">
-                    <div class="profile-avatar" role="img" aria-label="User Avatar"></div>
-                    <h3 id="profile-username">Joshua</h3>
-                    <p class="profile-status">EchoAI is learning you</p>
-                </div>
-                <div class="profile-actions">
-                    <button data-profile-action="edit">Edit Profile</button>
-                    <button data-profile-action="voice">Voice Preferences</button>
-                    <button data-profile-action="privacy">Privacy</button>
-                    <button data-profile-action="permissions">Permissions</button>
-                </div>
-            </section>
-
-            <!-- SETTINGS -->
-            <section id="screen-settings" class="screen" data-screen="settings" aria-hidden="true">
-                <div class="screen-header"><h2>Settings</h2></div>
-                <div class="settings-list">
-                    <div class="setting-item"><span>Always Listening Mode</span><button data-toggle="always-listening"></button></div>
-                    <div class="setting-item"><span>Background Activity</span><button data-toggle="background"></button></div>
-                    <div class="setting-item"><span>Emotion Detection</span><button data-toggle="emotion"></button></div>
-                    <div class="setting-item"><span>Voice Wake Word</span><button data-toggle="wakeword"></button></div>
-                    <div class="setting-item"><span>Notifications</span><button data-toggle="notifications"></button></div>
-                </div>
-            </section>
-
-        </section> <!-- END SCREEN STACK -->
-
-        <!-- BOTTOM NAVIGATION -->
-        <nav id="bottom-navigation" role="navigation" aria-label="Main Navigation">
-            <button data-nav="home" aria-label="Home"><span>Home</span></button>
-            <button data-nav="explore" aria-label="Explore"><span>Explore</span></button>
-            <button data-nav="chat" aria-label="Echo"><span>Echo</span></button>
-            <button data-nav="profile" aria-label="Profile"><span>Profile</span></button>
-            <button data-nav="settings" aria-label="Settings"><span>Settings</span></button>
-        </nav>
-
-    </main>
-
-    <!-- OVERLAYS & MODALS -->
-    <div id="voice-overlay" aria-hidden="true">
-        <div class="voice-orb"></div>
-        <p class="voice-status">Listening…</p>
     </div>
 
-    <div id="permission-modal" role="dialog" aria-hidden="true">
-        <div class="modal-content">
-            <h3>Permissions Required</h3>
-            <p>EchoAI needs microphone and background access.</p>
-            <button data-permission="allow">Grant</button>
-            <button data-permission="deny">Deny</button>
-        </div>
+    <div class="nav">
+        <button onclick="navigate('home')" class="active">Home</button>
+        <button onclick="navigate('dashboard')">Dashboard</button>
+        <button onclick="navigate('messages')">Messages</button>
+        <button onclick="navigate('friends')">Friends</button>
+        <button onclick="navigate('profile')">Profile</button>
     </div>
 
-    <div id="toast-container" aria-live="assertive"></div>
+</div>
 
-    <!-- RECOVERY SCREEN -->
-    <section id="screen-recovery" class="screen" data-screen="recovery" aria-hidden="true">
-        <div class="recovery-wrapper">
-            <h2>Recovering EchoAI</h2>
-            <p>Please wait while the app restores safely.</p>
-            <button data-recovery="restart">Restart</button>
-        </div>
-    </section>
+<script>
+/* =========================
+   SPEECH SETUP
+========================= */
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition;
+let listening = false;
 
-</div> <!-- END APP ROOT -->
+const log = document.getElementById("log");
+const statusText = document.getElementById("statusText");
+const indicator = document.getElementById("indicator");
 
-<!-- SCRIPT -->
-<script src="script.js" defer></script>
+function speak(text) {
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = 1;
+    utter.pitch = 1;
+    utter.lang = "en-US";
+    speechSynthesis.speak(utter);
+}
+
+function addLog(text, user=false) {
+    const p = document.createElement("p");
+    p.innerHTML = user ? `<strong>You:</strong> ${text}` : `<strong>EchoAI:</strong> ${text}`;
+    log.appendChild(p);
+    log.scrollTop = log.scrollHeight;
+}
+
+/* =========================
+   VOICE CONTROL
+========================= */
+function startListening() {
+    if (!SpeechRecognition) {
+        alert("Speech Recognition not supported");
+        return;
+    }
+
+    if (listening) return;
+
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.lang = "en-US";
+
+    recognition.onstart = () => {
+        listening = true;
+        indicator.classList.add("active");
+        statusText.textContent = "Listening...";
+        speak("I am listening");
+        addLog("Listening started");
+    };
+
+    recognition.onresult = (event) => {
+        const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
+        addLog(transcript, true);
+        handleCommand(transcript);
+    };
+
+    recognition.onend = () => {
+        if (listening) recognition.start();
+    };
+
+    recognition.start();
+}
+
+function stopListening() {
+    if (!recognition) return;
+    listening = false;
+    recognition.stop();
+    indicator.classList.remove("active");
+    statusText.textContent = "Voice inactive";
+    speak("Listening stopped");
+    addLog("Listening stopped");
+}
+
+/* =========================
+   COMMAND HANDLER
+========================= */
+function handleCommand(cmd) {
+
+    if (cmd.includes("hello")) {
+        respond("Hello Joshua, how can I help you?");
+    }
+    else if (cmd.includes("dashboard")) {
+        navigate("dashboard");
+        respond("Opening dashboard");
+    }
+    else if (cmd.includes("profile")) {
+        navigate("profile");
+        respond("Opening your profile");
+    }
+    else if (cmd.includes("messages")) {
+        navigate("messages");
+        respond("Opening messages");
+    }
+    else if (cmd.includes("friends")) {
+        navigate("friends");
+        respond("Opening friends");
+    }
+    else if (cmd.includes("home")) {
+        navigate("home");
+        respond("Going home");
+    }
+    else if (cmd.includes("clear")) {
+        log.innerHTML = "";
+        respond("Cleared the screen");
+    }
+    else if (cmd.includes("help")) {
+        respond("You can say things like open dashboard, open profile, or say hello");
+    }
+    else {
+        respond("I heard you, but I did not understand that command");
+    }
+}
+
+function respond(text) {
+    addLog(text);
+    speak(text);
+}
+
+/* =========================
+   NAVIGATION
+========================= */
+function navigate(page) {
+    document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
+    event?.target?.classList.add("active");
+    addLog("Navigated to " + page);
+}
+</script>
 
 </body>
 </html>
