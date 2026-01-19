@@ -71,7 +71,7 @@ function start() {
     dot.classList.add("active");
     status.textContent = "Listening for wake word";
     write("Listening started");
-    if (mem.visits > 1) speak("Welcome back Joshua");
+    if (mem.visits > 1) speak("Welcome back");
   };
 
   rec.onresult = e => {
