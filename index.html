@@ -6,159 +6,136 @@
 <title>EchoAI</title>
 
 <style>
-:root {
-    --bg: #0b0f14;
-    --card: #121826;
-    --accent: #4da3ff;
-    --text: #e8ecf1;
-    --muted: #9aa4b2;
-    --danger: #ff4d4d;
-    --success: #4dff88;
+:root{
+--bg:#05070c;
+--panel:#0f1424;
+--accent:#4da3ff;
+--happy:#4dff88;
+--sad:#4da3ff;
+--angry:#ff4d4d;
+--neutral:#9aa4b2;
+--text:#eaf0ff;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Segoe UI", system-ui, sans-serif;
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,system-ui}
+
+body{
+background:radial-gradient(circle at top,#0f1530,#05070c);
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+color:var(--text);
 }
 
-body {
-    background: radial-gradient(circle at top, #101828, #06080d);
-    color: var(--text);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.app {
-    width: 360px;
-    height: 640px;
-    background: linear-gradient(180deg, #0f1422, #090c14);
-    border-radius: 24px;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.7);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+.app{
+width:360px;
+height:640px;
+background:linear-gradient(180deg,#0c1122,#060913);
+border-radius:26px;
+box-shadow:0 40px 90px rgba(0,0,0,.8);
+display:flex;
+flex-direction:column;
+overflow:hidden;
 }
 
 /* HEADER */
-.header {
-    padding: 18px;
-    text-align: center;
-    background: linear-gradient(90deg, #111a33, #0d1326);
+.header{
+padding:18px;
+text-align:center;
+background:linear-gradient(90deg,#0f1a3a,#0b132e);
 }
 
-.header h1 {
-    font-size: 20px;
-    letter-spacing: 1px;
-}
-
-.header span {
-    color: var(--accent);
-}
+.header h1{font-size:21px;letter-spacing:1px}
+.header span{color:var(--accent)}
 
 /* MAIN */
-.main {
-    flex: 1;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+.main{
+flex:1;
+padding:16px;
+display:flex;
+flex-direction:column;
+gap:14px;
 }
 
-.card {
-    background: var(--card);
-    border-radius: 16px;
-    padding: 14px;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+.card{
+background:var(--panel);
+border-radius:16px;
+padding:14px;
+box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);
 }
 
-.status {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.status{
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:13px;
+color:#9aa4b2;
 }
 
-.status span {
-    font-size: 13px;
-    color: var(--muted);
+.dot{
+width:12px;
+height:12px;
+border-radius:50%;
+background:#ff4d4d;
+box-shadow:0 0 10px #ff4d4d;
 }
 
-.indicator {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--danger);
-    box-shadow: 0 0 10px var(--danger);
+.dot.active{
+background:#4dff88;
+box-shadow:0 0 14px #4dff88;
 }
 
-.indicator.active {
-    background: var(--success);
-    box-shadow: 0 0 12px var(--success);
+.emotion{
+font-size:12px;
+margin-top:6px;
+opacity:.8;
 }
 
-.log {
-    height: 200px;
-    overflow-y: auto;
-    font-size: 13px;
-    color: var(--muted);
+.log{
+height:210px;
+overflow-y:auto;
+font-size:13px;
 }
 
-.log p {
-    margin-bottom: 8px;
+.log p{margin-bottom:8px}
+.log strong{color:white}
+
+.controls{
+display:flex;
+gap:10px;
 }
 
-.log strong {
-    color: var(--text);
+button{
+flex:1;
+border:none;
+border-radius:14px;
+padding:14px;
+font-size:14px;
+cursor:pointer;
+color:white;
+background:linear-gradient(180deg,#1a2b52,#121a33);
+transition:.2s;
 }
 
-/* CONTROLS */
-.controls {
-    display: flex;
-    gap: 10px;
-}
-
-button {
-    flex: 1;
-    background: linear-gradient(180deg, #1b2a4d, #121a33);
-    color: white;
-    border: none;
-    border-radius: 14px;
-    padding: 14px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgba(77,163,255,0.25);
-}
-
-button.secondary {
-    background: #0f1424;
-}
+button.secondary{background:#0d1326}
 
 /* NAV */
-.nav {
-    display: flex;
-    background: #0a0e18;
-    border-top: 1px solid rgba(255,255,255,0.05);
+.nav{
+display:flex;
+border-top:1px solid rgba(255,255,255,.05);
+background:#080c18;
 }
 
-.nav button {
-    flex: 1;
-    border-radius: 0;
-    background: transparent;
-    font-size: 12px;
-    padding: 12px 0;
+.nav button{
+flex:1;
+font-size:12px;
+padding:12px 0;
+background:transparent;
+border-radius:0;
 }
 
-.nav button.active {
-    color: var(--accent);
-}
+.nav button.active{color:var(--accent)}
 </style>
 </head>
 
@@ -166,161 +143,163 @@ button.secondary {
 
 <div class="app">
 
-    <div class="header">
-        <h1>Echo<span>AI</span></h1>
-    </div>
+<div class="header">
+<h1>Echo<span>AI</span></h1>
+</div>
 
-    <div class="main">
+<div class="main">
 
-        <div class="card status">
-            <span id="statusText">Voice inactive</span>
-            <div id="indicator" class="indicator"></div>
-        </div>
+<div class="card">
+<div class="status">
+<span id="status">Waiting for “Echo”</span>
+<div id="dot" class="dot"></div>
+</div>
+<div class="emotion" id="emotion">Emotion: Neutral</div>
+</div>
 
-        <div class="card log" id="log"></div>
+<div class="card log" id="log"></div>
 
-        <div class="controls">
-            <button onclick="startListening()">Start</button>
-            <button class="secondary" onclick="stopListening()">Stop</button>
-        </div>
+<div class="controls">
+<button onclick="start()">Start</button>
+<button class="secondary" onclick="stop()">Stop</button>
+</div>
 
-    </div>
+</div>
 
-    <div class="nav">
-        <button onclick="navigate('home')" class="active">Home</button>
-        <button onclick="navigate('dashboard')">Dashboard</button>
-        <button onclick="navigate('messages')">Messages</button>
-        <button onclick="navigate('friends')">Friends</button>
-        <button onclick="navigate('profile')">Profile</button>
-    </div>
+<div class="nav">
+<button class="active" onclick="go('home',this)">Home</button>
+<button onclick="go('dashboard',this)">Dashboard</button>
+<button onclick="go('messages',this)">Messages</button>
+<button onclick="go('friends',this)">Friends</button>
+<button onclick="go('profile',this)">Profile</button>
+</div>
 
 </div>
 
 <script>
-/* =========================
-   SPEECH SETUP
-========================= */
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recognition;
-let listening = false;
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec, listening=false, awakened=false;
 
-const log = document.getElementById("log");
-const statusText = document.getElementById("statusText");
-const indicator = document.getElementById("indicator");
-
-function speak(text) {
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.rate = 1;
-    utter.pitch = 1;
-    utter.lang = "en-US";
-    speechSynthesis.speak(utter);
-}
-
-function addLog(text, user=false) {
-    const p = document.createElement("p");
-    p.innerHTML = user ? `<strong>You:</strong> ${text}` : `<strong>EchoAI:</strong> ${text}`;
-    log.appendChild(p);
-    log.scrollTop = log.scrollHeight;
-}
+const log=document.getElementById("log");
+const dot=document.getElementById("dot");
+const status=document.getElementById("status");
+const emotionEl=document.getElementById("emotion");
 
 /* =========================
-   VOICE CONTROL
+   SPEECH
 ========================= */
-function startListening() {
-    if (!SpeechRecognition) {
-        alert("Speech Recognition not supported");
-        return;
-    }
-
-    if (listening) return;
-
-    recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.lang = "en-US";
-
-    recognition.onstart = () => {
-        listening = true;
-        indicator.classList.add("active");
-        statusText.textContent = "Listening...";
-        speak("I am listening");
-        addLog("Listening started");
-    };
-
-    recognition.onresult = (event) => {
-        const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
-        addLog(transcript, true);
-        handleCommand(transcript);
-    };
-
-    recognition.onend = () => {
-        if (listening) recognition.start();
-    };
-
-    recognition.start();
+function say(text,rate=1){
+const u=new SpeechSynthesisUtterance(text);
+u.lang="en-US";
+u.rate=rate;
+speechSynthesis.speak(u);
 }
 
-function stopListening() {
-    if (!recognition) return;
-    listening = false;
-    recognition.stop();
-    indicator.classList.remove("active");
-    statusText.textContent = "Voice inactive";
-    speak("Listening stopped");
-    addLog("Listening stopped");
+function write(text,user=false){
+const p=document.createElement("p");
+p.innerHTML=user?`<strong>You:</strong> ${text}`:`<strong>EchoAI:</strong> ${text}`;
+log.appendChild(p);
+log.scrollTop=log.scrollHeight;
 }
 
 /* =========================
-   COMMAND HANDLER
+   EMOTION ENGINE
 ========================= */
-function handleCommand(cmd) {
+function detectEmotion(text){
+text=text.toLowerCase();
 
-    if (cmd.includes("hello")) {
-        respond("Hello Joshua, how can I help you?");
-    }
-    else if (cmd.includes("dashboard")) {
-        navigate("dashboard");
-        respond("Opening dashboard");
-    }
-    else if (cmd.includes("profile")) {
-        navigate("profile");
-        respond("Opening your profile");
-    }
-    else if (cmd.includes("messages")) {
-        navigate("messages");
-        respond("Opening messages");
-    }
-    else if (cmd.includes("friends")) {
-        navigate("friends");
-        respond("Opening friends");
-    }
-    else if (cmd.includes("home")) {
-        navigate("home");
-        respond("Going home");
-    }
-    else if (cmd.includes("clear")) {
-        log.innerHTML = "";
-        respond("Cleared the screen");
-    }
-    else if (cmd.includes("help")) {
-        respond("You can say things like open dashboard, open profile, or say hello");
-    }
-    else {
-        respond("I heard you, but I did not understand that command");
-    }
+if(/happy|great|awesome|good|excited/.test(text)) return "Happy";
+if(/sad|tired|lonely|down|upset/.test(text)) return "Sad";
+if(/angry|mad|hate|annoyed|stressed/.test(text)) return "Angry";
+return "Neutral";
 }
 
-function respond(text) {
-    addLog(text);
-    speak(text);
+function applyEmotion(e){
+emotionEl.textContent="Emotion: "+e;
+emotionEl.style.color=
+e==="Happy"?"var(--happy)":
+e==="Sad"?"var(--sad)":
+e==="Angry"?"var(--angry)":
+"var(--neutral)";
 }
 
 /* =========================
-   NAVIGATION
+   CONTROL
 ========================= */
-function navigate(page) {
-    document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
-    event?.target?.classList.add("active");
-    addLog("Navigated to " + page);
+function start(){
+if(!SR)return alert("Speech not supported");
+if(listening)return;
+
+rec=new SR();
+rec.continuous=true;
+rec.lang="en-US";
+
+rec.onstart=()=>{
+listening=true;
+dot.classList.add("active");
+status.textContent="Listening for wake word";
+write("Listening started");
+};
+
+rec.onresult=e=>{
+const t=e.results[e.results.length-1][0].transcript.trim();
+write(t,true);
+process(t);
+};
+
+rec.onend=()=>{if(listening)rec.start()};
+rec.start();
+}
+
+function stop(){
+listening=false;
+rec?.stop();
+dot.classList.remove("active");
+status.textContent="Stopped";
+say("Voice control stopped");
+write("Stopped");
+}
+
+/* =========================
+   LOGIC
+========================= */
+function process(text){
+
+if(!awakened){
+if(text.toLowerCase().includes("echo")){
+awakened=true;
+status.textContent="Awakened";
+say("Yes Joshua?");
+write("Wake word detected");
+}
+return;
+}
+
+awakened=false;
+
+const emotion=detectEmotion(text);
+applyEmotion(emotion);
+
+if(text.includes("dashboard")) respond("Opening dashboard",emotion);
+else if(text.includes("profile")) respond("Opening profile",emotion);
+else if(text.includes("home")) respond("Going home",emotion);
+else if(text.includes("hello")) respond("Hello Joshua, I am here.",emotion);
+else respond("I heard you.",emotion);
+}
+
+function respond(msg,emotion){
+const rate=emotion==="Happy"?1.05:emotion==="Sad"?0.9:1;
+say(msg,rate);
+write(msg);
+}
+
+/* =========================
+   NAV
+========================= */
+function go(page,btn){
+document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+write("Opened "+page);
 }
 </script>
 
