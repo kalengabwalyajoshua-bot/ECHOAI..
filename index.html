@@ -301,6 +301,19 @@ write("Opened "+page);
 
 function go(page){activate(page)}
 </script>
+<!-- ===== BEDTIME STORY SCREEN ===== -->
+<div id="bedtimeStoryScreen" class="screen" style="display:none; padding:20px; text-align:center;">
+    <h2>🌙 Bedtime Story</h2>
+    <p id="storyDisplay" style="margin-top:20px; font-size:1.2em; line-height:1.5;"></p>
+    <button onclick="showScreen('home')" style="margin-top:20px; padding:10px 20px; border-radius:10px; cursor:pointer;">
+        Back to Home
+    </button>
+</div>
 
+<!-- ===== BEDTIME STORY BUTTON ===== -->
+<!-- Fixed button visible on all screens -->
+<button id="bedtimeStoryButton" style="position:fixed; bottom:80px; right:20px; padding:15px 20px; border-radius:50%; font-size:16px; cursor:pointer;">
+    🌙 Story
+</button>
 </body>
 </html>
