@@ -21,9 +21,7 @@ recognition.onresult = (event) => {
     handleVoiceCommand(transcript);
 };
 
-recognition.onerror = (event) => {
-    console.error('Voice recognition error:', event.error);
-};
+recognition.onerror = (event) => console.error('Voice recognition error:', event.error);
 
 // ===== SCREEN NAVIGATION =====
 function showScreen(screenId) {
@@ -33,7 +31,6 @@ function showScreen(screenId) {
     currentScreen = screenId;
 }
 
-// Initialize default screen
 showScreen('home');
 
 // ===== BUTTON EVENT LISTENERS =====
@@ -49,34 +46,20 @@ buttons.forEach(button => {
 // ===== VOICE COMMAND HANDLER =====
 function toggleVoiceCommand() {
     isVoiceCommandActive = !isVoiceCommandActive;
-    if(isVoiceCommandActive) {
-        recognition.start();
-        console.log('Voice command activated');
-    } else {
-        recognition.stop();
-        console.log('Voice command deactivated');
-    }
+    if(isVoiceCommandActive) recognition.start();
+    else recognition.stop();
 }
 
 function handleVoiceCommand(command) {
-    console.log('Voice command received:', command);
-
-    // Navigation commands
     if(command.includes('go to home')) showScreen('home');
     else if(command.includes('go to explore')) showScreen('explore');
     else if(command.includes('bedtime story')) tellBedtimeStory();
     else if(command.includes('stop voice')) toggleVoiceCommand();
-
-    // Auto-suggestions
     else if(command.includes('suggest')) provideSuggestions(command);
-
-    // Default: respond to everything
-    else {
-        respondToUser(command);
-    }
+    else respondToUser(command);
 }
 
-// ===== BEDTIME STORIES WITH SOUND =====
+// ===== BEDTIME STORIES WITH LAYERED SOUNDS =====
 const bedtimeStories = [
     "Once upon a time, in a land of sparkling stars, there lived a little fox who loved to dance under the moonlight.",
     "A tiny owl named Ollie wanted to see the world. One night, he flew past mountains and rivers and discovered the beauty of the forest.",
@@ -84,41 +67,54 @@ const bedtimeStories = [
     "In a quiet village, a magical tree told stories to children who believed in dreams, filling their hearts with wonder."
 ];
 
+// Multiple online sound effects
 const soundEffects = [
-    "sounds/thrill1.mp3",
-    "sounds/thrill2.mp3",
-    "sounds/thrill3.mp3"
+    "https://www.soundjay.com/horror/sounds/horror-1.mp3",
+    "https://www.soundjay.com/horror/sounds/horror-2.mp3",
+    "https://www.soundjay.com/horror/sounds/horror-3.mp3"
 ];
 
+// Play multiple sounds layered
+function playLayeredSounds() {
+    soundEffects.forEach(url => {
+        const sound = new Audio(url);
+        sound.volume = 0.3; // lower volume for layering
+        sound.play();
+    });
+}
+
 function tellBedtimeStory() {
-    // Random story
     const storyIndex = Math.floor(Math.random() * bedtimeStories.length);
     const story = bedtimeStories[storyIndex];
-    
-    // Random sound effect
-    const soundIndex = Math.floor(Math.random() * soundEffects.length);
-    const sound = new Audio(soundEffects[soundIndex]);
-    sound.volume = 0.6;
-    sound.play();
 
     if(storyDisplay) storyDisplay.innerText = story;
     showScreen('bedtimeStoryScreen');
+
+    // Play layered sounds immediately
+    playLayeredSounds();
+
+    // Small delay so sounds start before story
+    setTimeout(() => {
+        const utterance = new SpeechSynthesisUtterance(story);
+        utterance.pitch = 1.2;
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+    }, 500);
 }
 
 // ===== RESPOND TO EVERYTHING USER SAYS =====
 function respondToUser(text) {
-    // Log conversation
     conversationLog.push({user: text});
-
-    // Simple AI-style response
     let response = "";
     if(text.includes('hello') || text.includes('hi')) response = "Hello! Would you like a bedtime story or some suggestions?";
     else if(text.includes('story')) response = "I have some thrilling bedtime stories ready. Want me to tell one?";
     else if(text.includes('suggest')) response = "I can suggest games, exercises, or interesting trivia for you!";
     else response = "That's interesting! I can tell a story, give suggestions, or just chat.";
 
-    // Output response visually
-    alert(response); // Replace with fancy chat display later if needed
+    const utterance = new SpeechSynthesisUtterance(response);
+    utterance.pitch = 1;
+    utterance.rate = 1;
+    window.speechSynthesis.speak(utterance);
 }
 
 // ===== PROVIDE SUGGESTIONS =====
@@ -129,17 +125,14 @@ function provideSuggestions(command) {
         "You could play an educational game to sharpen your mind.",
         "Want me to tell a fun fact?"
     ];
-
     const suggestionIndex = Math.floor(Math.random() * suggestions.length);
     const suggestion = suggestions[suggestionIndex];
 
-    alert("Suggestion: " + suggestion);
+    const utterance = new SpeechSynthesisUtterance(suggestion);
+    window.speechSynthesis.speak(utterance);
 }
 
-// ===== BACK BUTTON HANDLING =====
+// ===== BACK BUTTON =====
 document.addEventListener('keydown', (e) => {
     if(e.key === 'Escape') showScreen('home');
 });
-
-// ===== EXTRA FEATURES =====
-// Future AI enhancements, quizzes, music, exercises, and interactive chats can be added here
