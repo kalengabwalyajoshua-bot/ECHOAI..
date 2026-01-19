@@ -1,319 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EchoAI</title>
-
-<style>
-:root{
---bg:#05070c;
---panel:#0f1424;
---accent:#4da3ff;
---happy:#4dff88;
---sad:#4da3ff;
---angry:#ff4d4d;
---neutral:#9aa4b2;
---text:#eaf0ff;
-}
-
-*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,system-ui}
-
-body{
-background:radial-gradient(circle at top,#0f1530,#05070c);
-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-color:var(--text);
-}
-
-.app{
-width:360px;
-height:640px;
-background:linear-gradient(180deg,#0c1122,#060913);
-border-radius:26px;
-box-shadow:0 40px 90px rgba(0,0,0,.8);
-display:flex;
-flex-direction:column;
-overflow:hidden;
-}
-
-.header{
-padding:18px;
-text-align:center;
-background:linear-gradient(90deg,#0f1a3a,#0b132e);
-}
-.header h1{font-size:21px;letter-spacing:1px}
-.header span{color:var(--accent)}
-
-.main{
-flex:1;
-padding:16px;
-display:flex;
-flex-direction:column;
-gap:14px;
-}
-
-.card{
-background:var(--panel);
-border-radius:16px;
-padding:14px;
-box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);
-}
-
-.status{
-display:flex;
-justify-content:space-between;
-align-items:center;
-font-size:13px;
-color:#9aa4b2;
-}
-
-.dot{
-width:12px;
-height:12px;
-border-radius:50%;
-background:#ff4d4d;
-box-shadow:0 0 10px #ff4d4d;
-}
-.dot.active{
-background:#4dff88;
-box-shadow:0 0 14px #4dff88;
-}
-
-.emotion{
-font-size:12px;
-margin-top:6px;
-opacity:.85;
-}
-
-.log{
-height:210px;
-overflow-y:auto;
-font-size:13px;
-}
-.log p{margin-bottom:8px}
-.log strong{color:white}
-
-.controls{
-display:flex;
-gap:10px;
-}
-button{
-flex:1;
-border:none;
-border-radius:14px;
-padding:14px;
-font-size:14px;
-cursor:pointer;
-color:white;
-background:linear-gradient(180deg,#1a2b52,#121a33);
-transition:.2s;
-}
-button.secondary{background:#0d1326}
-
-.nav{
-display:flex;
-border-top:1px solid rgba(255,255,255,.05);
-background:#080c18;
-}
-.nav button{
-flex:1;
-font-size:12px;
-padding:12px 0;
-background:transparent;
-border-radius:0;
-}
-.nav button.active{color:var(--accent)}
-</style>
+    <meta charset="UTF-8">
+    <title>EchoAI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        .screen {
+            display: none;
+            padding: 20px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .screen h1, .screen h2 {
+            text-align: center;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .nav-buttons button {
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+        }
+        #voiceCommandBtn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+        }
+        #bedtimeStoryButton {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #FF9800;
+            color: white;
+            border: none;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        #storyDisplay {
+            margin-top: 30px;
+            font-size: 1.3em;
+            line-height: 1.6em;
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="app">
-
-<div class="header">
-<h1>Echo<span>AI</span></h1>
+<!-- ===== HOME SCREEN ===== -->
+<div id="home" class="screen">
+    <h1>Welcome to EchoAI</h1>
+    <div class="nav-buttons">
+        <button data-target="explore">Explore</button>
+        <button data-target="profile">Profile</button>
+    </div>
 </div>
 
-<div class="main">
-
-<div class="card">
-<div class="status">
-<span id="status">Waiting for “Echo”</span>
-<div id="dot" class="dot"></div>
-</div>
-<div id="emotion" class="emotion">Emotion: Neutral</div>
-</div>
-
-<div class="card log" id="log"></div>
-
-<div class="controls">
-<button onclick="start()">Start</button>
-<button class="secondary" onclick="stop()">Stop</button>
+<!-- ===== EXPLORE SCREEN ===== -->
+<div id="explore" class="screen">
+    <h1>Explore</h1>
+    <p>Here you can explore stories, suggestions, and interactive features.</p>
+    <div class="nav-buttons">
+        <button data-target="home">Home</button>
+        <button data-target="profile">Profile</button>
+    </div>
 </div>
 
+<!-- ===== PROFILE SCREEN ===== -->
+<div id="profile" class="screen">
+    <h1>Profile</h1>
+    <p>Track your interactions and AI suggestions here.</p>
+    <div class="nav-buttons">
+        <button data-target="home">Home</button>
+        <button data-target="explore">Explore</button>
+    </div>
 </div>
 
-<div class="nav">
-<button class="active" onclick="go('home',this)">Home</button>
-<button onclick="go('dashboard',this)">Dashboard</button>
-<button onclick="go('messages',this)">Messages</button>
-<button onclick="go('friends',this)">Friends</button>
-<button onclick="go('profile',this)">Profile</button>
-</div>
-
-</div>
-
-<script>
-/* ========= CORE ========= */
-const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-let rec,listening=false,awakened=false;
-
-const log=document.getElementById("log");
-const dot=document.getElementById("dot");
-const status=document.getElementById("status");
-const emotionEl=document.getElementById("emotion");
-
-/* ========= MEMORY ========= */
-const memKey="echoai_memory";
-let mem=JSON.parse(localStorage.getItem(memKey))||{
-visits:0,lastEmotion:"Neutral",favorite:"home",commands:{}};
-mem.visits++; saveMem();
-
-function saveMem(){localStorage.setItem(memKey,JSON.stringify(mem))}
-
-/* ========= SPEAK ========= */
-function speak(text,rate=1){
-speechSynthesis.cancel();
-const u=new SpeechSynthesisUtterance(text);
-u.lang="en-US"; u.rate=rate;
-speechSynthesis.speak(u);
-}
-
-/* ========= LOG ========= */
-function write(text,user=false){
-const p=document.createElement("p");
-p.innerHTML=user?`<strong>You:</strong> ${text}`:`<strong>EchoAI:</strong> ${text}`;
-log.appendChild(p); log.scrollTop=log.scrollHeight;
-}
-
-/* ========= EMOTION ========= */
-function detectEmotion(t){
-t=t.toLowerCase();
-if(/happy|great|awesome|excited|good/.test(t))return"Happy";
-if(/sad|tired|down|lonely|upset/.test(t))return"Sad";
-if(/angry|mad|hate|stressed|annoyed/.test(t))return"Angry";
-return"Neutral";
-}
-
-function applyEmotion(e){
-emotionEl.textContent="Emotion: "+e;
-emotionEl.style.color=
-e==="Happy"?"var(--happy)":
-e==="Sad"?"var(--sad)":
-e==="Angry"?"var(--angry)":"var(--neutral)";
-mem.lastEmotion=e; saveMem();
-}
-
-/* ========= START / STOP ========= */
-function start(){
-if(!SR)return alert("Speech not supported");
-if(listening)return;
-
-rec=new SR();
-rec.continuous=true;
-rec.lang="en-US";
-
-rec.onstart=()=>{
-listening=true;
-dot.classList.add("active");
-status.textContent="Listening for wake word";
-write("Listening started");
-if(mem.visits>1)speak("Welcome back Joshua");
-};
-
-rec.onresult=e=>{
-const t=e.results[e.results.length-1][0].transcript.trim();
-write(t,true); process(t);
-};
-
-rec.onend=()=>{if(listening)rec.start()};
-rec.start();
-}
-
-function stop(){
-listening=false; rec?.stop();
-dot.classList.remove("active");
-status.textContent="Stopped";
-speak("Voice control stopped");
-write("Stopped");
-}
-
-/* ========= PROCESS ========= */
-function process(text){
-const t=text.toLowerCase();
-
-if(!awakened){
-if(t.includes("echo")){
-awakened=true;
-status.textContent="Awakened";
-speak("Yes Joshua");
-write("Wake word detected");
-}
-return;
-}
-awakened=false;
-
-const emo=detectEmotion(t);
-applyEmotion(emo);
-
-if(t.includes("home"))cmd("home");
-else if(t.includes("dashboard"))cmd("dashboard");
-else if(t.includes("messages"))cmd("messages");
-else if(t.includes("friends"))cmd("friends");
-else if(t.includes("profile"))cmd("profile");
-else if(t.includes("hello"))respond("Hello Joshua",emo);
-else respond("I heard you",emo);
-}
-
-function respond(msg,emo){
-const rate=emo==="Happy"?1.05:emo==="Sad"?0.9:1;
-speak(msg,rate); write(msg);
-}
-
-/* ========= COMMAND ========= */
-function cmd(page){
-mem.commands[page]=(mem.commands[page]||0)+1;
-mem.favorite=page; saveMem();
-respond("Opening "+page,mem.lastEmotion);
-activate(page);
-}
-
-function activate(page){
-document.querySelectorAll(".nav button").forEach(b=>{
-b.classList.remove("active");
-if(b.textContent.toLowerCase().includes(page))b.classList.add("active");
-});
-write("Opened "+page);
-}
-
-function go(page){activate(page)}
-</script>
 <!-- ===== BEDTIME STORY SCREEN ===== -->
-<div id="bedtimeStoryScreen" class="screen" style="display:none; padding:20px; text-align:center;">
+<div id="bedtimeStoryScreen" class="screen">
     <h2>🌙 Bedtime Story</h2>
-    <p id="storyDisplay" style="margin-top:20px; font-size:1.2em; line-height:1.5;"></p>
-    <button onclick="showScreen('home')" style="margin-top:20px; padding:10px 20px; border-radius:10px; cursor:pointer;">
-        Back to Home
-    </button>
+    <p id="storyDisplay"></p>
+    <div class="nav-buttons">
+        <button onclick="showScreen('home')">Back to Home</button>
+    </div>
 </div>
+
+<!-- ===== VOICE COMMAND BUTTON ===== -->
+<button id="voiceCommandBtn">🎤</button>
 
 <!-- ===== BEDTIME STORY BUTTON ===== -->
-<!-- Fixed button visible on all screens -->
-<button id="bedtimeStoryButton" style="position:fixed; bottom:80px; right:20px; padding:15px 20px; border-radius:50%; font-size:16px; cursor:pointer;">
-    🌙 Story
-</button>
+<button id="bedtimeStoryButton">🌙 Story</button>
+
+<!-- ===== SCRIPT ===== -->
+<script src="echoai.js"></script>
 </body>
 </html>
