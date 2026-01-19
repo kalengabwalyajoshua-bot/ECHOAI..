@@ -1,0 +1,147 @@
+:root{
+  --bg:#05070c;
+  --panel:#0f1424;
+  --accent:#4da3ff;
+  --happy:#4dff88;
+  --sad:#4da3ff;
+  --angry:#ff4d4d;
+  --neutral:#9aa4b2;
+  --text:#eaf0ff;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Segoe UI, system-ui;
+}
+
+body{
+  background:radial-gradient(circle at top,#0f1530,#05070c);
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--text);
+}
+
+.app{
+  width:360px;
+  height:640px;
+  background:linear-gradient(180deg,#0c1122,#060913);
+  border-radius:26px;
+  box-shadow:0 40px 90px rgba(0,0,0,.8);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+.header{
+  padding:18px;
+  text-align:center;
+  background:linear-gradient(90deg,#0f1a3a,#0b132e);
+}
+
+.header h1{
+  font-size:21px;
+  letter-spacing:1px;
+}
+
+.header span{
+  color:var(--accent);
+}
+
+.main{
+  flex:1;
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.card{
+  background:var(--panel);
+  border-radius:16px;
+  padding:14px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);
+}
+
+.status{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:13px;
+  color:#9aa4b2;
+}
+
+.dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#ff4d4d;
+  box-shadow:0 0 10px #ff4d4d;
+}
+
+.dot.active{
+  background:#4dff88;
+  box-shadow:0 0 14px #4dff88;
+}
+
+.emotion{
+  font-size:12px;
+  margin-top:6px;
+  opacity:.85;
+}
+
+.log{
+  height:210px;
+  overflow-y:auto;
+  font-size:13px;
+}
+
+.log p{
+  margin-bottom:8px;
+}
+
+.log strong{
+  color:white;
+}
+
+.controls{
+  display:flex;
+  gap:10px;
+}
+
+button{
+  flex:1;
+  border:none;
+  border-radius:14px;
+  padding:14px;
+  font-size:14px;
+  cursor:pointer;
+  color:white;
+  background:linear-gradient(180deg,#1a2b52,#121a33);
+  transition:.2s;
+}
+
+button.secondary{
+  background:#0d1326;
+}
+
+.nav{
+  display:flex;
+  border-top:1px solid rgba(255,255,255,.05);
+  background:#080c18;
+}
+
+.nav button{
+  flex:1;
+  font-size:12px;
+  padding:12px 0;
+  background:transparent;
+  border-radius:0;
+}
+
+.nav button.active{
+  color:var(--accent);
+}
