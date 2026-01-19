@@ -39,17 +39,14 @@ flex-direction:column;
 overflow:hidden;
 }
 
-/* HEADER */
 .header{
 padding:18px;
 text-align:center;
 background:linear-gradient(90deg,#0f1a3a,#0b132e);
 }
-
 .header h1{font-size:21px;letter-spacing:1px}
 .header span{color:var(--accent)}
 
-/* MAIN */
 .main{
 flex:1;
 padding:16px;
@@ -80,7 +77,6 @@ border-radius:50%;
 background:#ff4d4d;
 box-shadow:0 0 10px #ff4d4d;
 }
-
 .dot.active{
 background:#4dff88;
 box-shadow:0 0 14px #4dff88;
@@ -89,7 +85,7 @@ box-shadow:0 0 14px #4dff88;
 .emotion{
 font-size:12px;
 margin-top:6px;
-opacity:.8;
+opacity:.85;
 }
 
 .log{
@@ -97,7 +93,6 @@ height:210px;
 overflow-y:auto;
 font-size:13px;
 }
-
 .log p{margin-bottom:8px}
 .log strong{color:white}
 
@@ -105,7 +100,6 @@ font-size:13px;
 display:flex;
 gap:10px;
 }
-
 button{
 flex:1;
 border:none;
@@ -117,16 +111,13 @@ color:white;
 background:linear-gradient(180deg,#1a2b52,#121a33);
 transition:.2s;
 }
-
 button.secondary{background:#0d1326}
 
-/* NAV */
 .nav{
 display:flex;
 border-top:1px solid rgba(255,255,255,.05);
 background:#080c18;
 }
-
 .nav button{
 flex:1;
 font-size:12px;
@@ -134,7 +125,6 @@ padding:12px 0;
 background:transparent;
 border-radius:0;
 }
-
 .nav button.active{color:var(--accent)}
 </style>
 </head>
@@ -154,7 +144,7 @@ border-radius:0;
 <span id="status">Waiting for “Echo”</span>
 <div id="dot" class="dot"></div>
 </div>
-<div class="emotion" id="emotion">Emotion: Neutral</div>
+<div id="emotion" class="emotion">Emotion: Neutral</div>
 </div>
 
 <div class="card log" id="log"></div>
@@ -177,41 +167,45 @@ border-radius:0;
 </div>
 
 <script>
-const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-let rec, listening=false, awakened=false;
+/* ========= CORE ========= */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec,listening=false,awakened=false;
 
 const log=document.getElementById("log");
 const dot=document.getElementById("dot");
 const status=document.getElementById("status");
 const emotionEl=document.getElementById("emotion");
 
-/* =========================
-   SPEECH
-========================= */
-function say(text,rate=1){
+/* ========= MEMORY ========= */
+const memKey="echoai_memory";
+let mem=JSON.parse(localStorage.getItem(memKey))||{
+visits:0,lastEmotion:"Neutral",favorite:"home",commands:{}};
+mem.visits++; saveMem();
+
+function saveMem(){localStorage.setItem(memKey,JSON.stringify(mem))}
+
+/* ========= SPEAK ========= */
+function speak(text,rate=1){
+speechSynthesis.cancel();
 const u=new SpeechSynthesisUtterance(text);
-u.lang="en-US";
-u.rate=rate;
+u.lang="en-US"; u.rate=rate;
 speechSynthesis.speak(u);
 }
 
+/* ========= LOG ========= */
 function write(text,user=false){
 const p=document.createElement("p");
 p.innerHTML=user?`<strong>You:</strong> ${text}`:`<strong>EchoAI:</strong> ${text}`;
-log.appendChild(p);
-log.scrollTop=log.scrollHeight;
+log.appendChild(p); log.scrollTop=log.scrollHeight;
 }
 
-/* =========================
-   EMOTION ENGINE
-========================= */
-function detectEmotion(text){
-text=text.toLowerCase();
-
-if(/happy|great|awesome|good|excited/.test(text)) return "Happy";
-if(/sad|tired|lonely|down|upset/.test(text)) return "Sad";
-if(/angry|mad|hate|annoyed|stressed/.test(text)) return "Angry";
-return "Neutral";
+/* ========= EMOTION ========= */
+function detectEmotion(t){
+t=t.toLowerCase();
+if(/happy|great|awesome|excited|good/.test(t))return"Happy";
+if(/sad|tired|down|lonely|upset/.test(t))return"Sad";
+if(/angry|mad|hate|stressed|annoyed/.test(t))return"Angry";
+return"Neutral";
 }
 
 function applyEmotion(e){
@@ -219,13 +213,11 @@ emotionEl.textContent="Emotion: "+e;
 emotionEl.style.color=
 e==="Happy"?"var(--happy)":
 e==="Sad"?"var(--sad)":
-e==="Angry"?"var(--angry)":
-"var(--neutral)";
+e==="Angry"?"var(--angry)":"var(--neutral)";
+mem.lastEmotion=e; saveMem();
 }
 
-/* =========================
-   CONTROL
-========================= */
+/* ========= START / STOP ========= */
 function start(){
 if(!SR)return alert("Speech not supported");
 if(listening)return;
@@ -239,12 +231,12 @@ listening=true;
 dot.classList.add("active");
 status.textContent="Listening for wake word";
 write("Listening started");
+if(mem.visits>1)speak("Welcome back Joshua");
 };
 
 rec.onresult=e=>{
 const t=e.results[e.results.length-1][0].transcript.trim();
-write(t,true);
-process(t);
+write(t,true); process(t);
 };
 
 rec.onend=()=>{if(listening)rec.start()};
@@ -252,55 +244,62 @@ rec.start();
 }
 
 function stop(){
-listening=false;
-rec?.stop();
+listening=false; rec?.stop();
 dot.classList.remove("active");
 status.textContent="Stopped";
-say("Voice control stopped");
+speak("Voice control stopped");
 write("Stopped");
 }
 
-/* =========================
-   LOGIC
-========================= */
+/* ========= PROCESS ========= */
 function process(text){
+const t=text.toLowerCase();
 
 if(!awakened){
-if(text.toLowerCase().includes("echo")){
+if(t.includes("echo")){
 awakened=true;
 status.textContent="Awakened";
-say("Yes Joshua?");
+speak("Yes Joshua");
 write("Wake word detected");
 }
 return;
 }
-
 awakened=false;
 
-const emotion=detectEmotion(text);
-applyEmotion(emotion);
+const emo=detectEmotion(t);
+applyEmotion(emo);
 
-if(text.includes("dashboard")) respond("Opening dashboard",emotion);
-else if(text.includes("profile")) respond("Opening profile",emotion);
-else if(text.includes("home")) respond("Going home",emotion);
-else if(text.includes("hello")) respond("Hello Joshua, I am here.",emotion);
-else respond("I heard you.",emotion);
+if(t.includes("home"))cmd("home");
+else if(t.includes("dashboard"))cmd("dashboard");
+else if(t.includes("messages"))cmd("messages");
+else if(t.includes("friends"))cmd("friends");
+else if(t.includes("profile"))cmd("profile");
+else if(t.includes("hello"))respond("Hello Joshua",emo);
+else respond("I heard you",emo);
 }
 
-function respond(msg,emotion){
-const rate=emotion==="Happy"?1.05:emotion==="Sad"?0.9:1;
-say(msg,rate);
-write(msg);
+function respond(msg,emo){
+const rate=emo==="Happy"?1.05:emo==="Sad"?0.9:1;
+speak(msg,rate); write(msg);
 }
 
-/* =========================
-   NAV
-========================= */
-function go(page,btn){
-document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
+/* ========= COMMAND ========= */
+function cmd(page){
+mem.commands[page]=(mem.commands[page]||0)+1;
+mem.favorite=page; saveMem();
+respond("Opening "+page,mem.lastEmotion);
+activate(page);
+}
+
+function activate(page){
+document.querySelectorAll(".nav button").forEach(b=>{
+b.classList.remove("active");
+if(b.textContent.toLowerCase().includes(page))b.classList.add("active");
+});
 write("Opened "+page);
 }
+
+function go(page){activate(page)}
 </script>
 
 </body>
